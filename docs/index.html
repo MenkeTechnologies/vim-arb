@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="vim-arb — Vim / Neovim support for the arb language, a Tcl/Tk-flavored declarative pipeline-visualization DSL on fusevm/JIT. Filetype detection for *.arb and arb shebangs, a standalone arb syntax grammar (widgets, query verbs, input sources, directives), brace-aware indentation, :make / :ArbRun through arb --check, ALE linting via arb --check, and vim-lsp / coc.nvim registration via arb --lsp plus nvim-dap via arb --dap. Pathogen / vim-plug / native-package install.">
+  <title>vim-arb — Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="hud-static.css">
+  <link rel="stylesheet" href="tutorial.css">
+  <style>
+    .tutorial-main { max-width: 68rem; }
+    .docs-build-line {
+      margin: 0.35rem 0 0;
+      font-family: 'Share Tech Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.03em;
+      max-width: 42rem;
+      opacity: 0.75;
+    }
+    .hub-scheme-strip {
+      border-bottom: 1px dashed var(--border);
+      background: color-mix(in srgb, var(--bg-secondary) 85%, transparent);
+      padding: 0.55rem 1.5rem 0.65rem;
+      position: relative;
+    }
+    .hub-scheme-strip-inner {
+      max-width: 68rem;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .hub-scheme-strip .hud-scheme-label {
+      flex: 0 0 auto;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-align: left;
+    }
+    .hub-scheme-strip .scheme-grid {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+    }
+    @media (max-width: 720px) {
+      .hub-scheme-strip-inner { flex-direction: column; align-items: stretch; }
+      .hub-scheme-strip .scheme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .parity-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0 0.2rem;
+      font-size: 12px;
+    }
+    .parity-table th {
+      background: var(--bg-secondary);
+      color: var(--cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: left;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+    }
+    .parity-table td {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      vertical-align: top;
+    }
+    .parity-table td code { color: var(--accent-light); background: var(--bg); padding: 1px 4px; }
+    .parity-table td.ok    { color: var(--green); font-weight: 700; }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+      gap: 0.6rem;
+      margin: 0.7rem 0;
+    }
+    .cat-card {
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--cyan);
+      padding: 0.6rem 0.8rem;
+      background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+      border-radius: 2px;
+    }
+    .cat-card h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin: 0 0 0.35rem;
+    }
+    .cat-card p {
+      margin: 0;
+      font-size: 11.5px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .cat-card code { font-size: 11px; color: var(--accent-light); }
+  </style>
+</head>
+<body>
+  <div class="app tutorial-app" id="docsApp">
+    <div class="crt-scanline" id="crtH" aria-hidden="true"></div>
+    <div class="crt-scanline-v" id="crtV" aria-hidden="true"></div>
+
+    <header class="tutorial-header">
+      <div class="tutorial-header-inner">
+        <div>
+          <h1 class="tutorial-brand">// VIM-ARB — VIM / NEOVIM SUPPORT FOR THE ARB LANGUAGE</h1>
+          <nav class="tutorial-crumbs" aria-label="Breadcrumb">
+            <span class="current">Docs</span>
+            <span class="sep">/</span>
+            <a href="report.html">Engineering report</a>
+            <span class="sep">/</span>
+            <a href="https://github.com/MenkeTechnologies/vim-arb" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </nav>
+          <p class="docs-build-line">filetype detection (*.arb + arb shebang) · standalone arb grammar (widgets, query verbs, sources, directives) · brace-aware indent · :make / :ArbRun via arb · ALE lint via arb --check</p>
+          <p class="docs-build-line">vim-lsp / coc via arb --lsp · nvim-dap via arb --dap · pathogen / vim-plug / native packages · zero config · opt-outs g:vim_arb_no_ale, g:vim_arb_no_lsp</p>
+        </div>
+        <div class="tutorial-toolbar">
+          <button type="button" class="btn btn-secondary" id="btnTheme" title="Toggle light/dark">Theme</button>
+          <button type="button" class="btn btn-secondary active" id="btnCrt" title="CRT scanline overlay">CRT</button>
+          <button type="button" class="btn btn-secondary active" id="btnNeon" title="Neon border pulse">Neon</button>
+          <a class="btn btn-secondary" href="report.html">Report</a>
+          <a class="btn btn-secondary" href="https://github.com/MenkeTechnologies/vim-arb" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="btn btn-secondary" href="https://github.com/MenkeTechnologies/vim-arb/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="hub-scheme-strip">
+      <div class="hub-scheme-strip-inner">
+        <span class="hud-scheme-label">// Color scheme</span>
+        <div class="scheme-grid" id="hudSchemeGrid"></div>
+      </div>
+    </div>
+
+    <main class="tutorial-main">
+      <h2 class="tutorial-title"><span class="step-hash">&gt;_</span>VIM-ARB &mdash; ARB IN VIM AND NEOVIM</h2>
+      <p class="tutorial-subtitle"><strong>Load it with pathogen, get full arb support in Vim / Neovim.</strong> arb is a Tcl/Tk-flavored declarative language for visualizing and modifying Unix pipelines — pipe a stream in and it spawns a ratatui TUI or a served web page from a small spec, on <strong>fusevm/JIT</strong>. vim-arb registers the <code>arb</code> filetype for <code>*.arb</code> files and arb shebangs, highlights with a <strong>standalone arb grammar</strong> (widgets, query verbs, input sources, directives, keywords, widget paths, <code>-flags</code>, <code>/regex/</code>), indents with a brace-aware indenter, wires <code>:make</code> / <code>:ArbRun</code> through the arb binary, registers <code>arb --check</code> as an ALE linter, and registers <code>arb --lsp</code> for vim-lsp and coc.nvim (plus <code>arb --dap</code> guidance for nvim-dap).</p>
+
+      <section class="tutorial-section">
+        <h2>Install</h2>
+        <p>The <code>arb</code> binary must be on <code>$PATH</code> for running, linting and LSP. Then drop the plugin into your runtimepath:</p>
+<pre># pathogen
+cd ~/.vim/bundle
+git clone https://github.com/MenkeTechnologies/vim-arb
+# then, inside vim:  :Helptags
+
+# vim-plug (add to ~/.vimrc / init.vim)
+Plug 'MenkeTechnologies/vim-arb'
+
+# native packages (Vim 8+ / Neovim)
+git clone https://github.com/MenkeTechnologies/vim-arb \
+    ~/.vim/pack/plugins/start/vim-arb</pre>
+        <p>Open any <code>.arb</code> file and it lights up &mdash; no further configuration. Help: <code>:help vim-arb</code>.</p>
+      </section>
+
+      <section class="tutorial-section">
+        <h2>What you get</h2>
+        <div class="cat-grid">
+          <div class="cat-card">
+            <h4>Filetype detection</h4>
+            <p>Every <code>*.arb</code> file becomes <code>filetype=arb</code>. Extensionless scripts with a <code>#!/usr/bin/env arb</code> shebang are detected too.</p>
+          </div>
+          <div class="cat-card">
+            <h4>Syntax highlighting</h4>
+            <p>A standalone arb grammar — widgets, query verbs, input sources, directives, control flow, declarations, widget paths, <code>-flags</code>, <code>/regex/</code>, strings, durations/sizes, and operators — built from arb's own LSP corpus.</p>
+          </div>
+          <div class="cat-card">
+            <h4>Indentation</h4>
+            <p>A standalone brace-aware indenter — indents after a line that opens a block / paren / bracket, dedents lines that start with a closing delimiter.</p>
+          </div>
+          <div class="cat-card">
+            <h4>Run &amp; lint</h4>
+            <p><code>:compiler arb</code> wires <code>:make</code> to <code>arb --check</code> into the quickfix list; <code>:ArbRun</code> executes the buffer via <code>arb %</code>. ALE runs the same lint inline.</p>
+          </div>
+          <div class="cat-card">
+            <h4>Language server &amp; debugger</h4>
+            <p>Registers <code>arb --lsp</code> for <a href="https://github.com/prabirshrestha/vim-lsp" target="_blank" rel="noopener noreferrer">vim-lsp</a> (filetype <code>arb</code>) — diagnostics, hover, completion; coc.nvim + nvim-dap (<code>arb --dap</code>) snippets in the README. Each is invoked with only its flag (no appended <code>--stdio</code>), and the wiring is guarded so the plugin still loads cleanly if the binary is absent.</p>
+          </div>
+          <div class="cat-card">
+            <h4>Zero config</h4>
+            <p>No settings required. Opt-outs: <code>g:vim_arb_no_ale</code>, <code>g:vim_arb_no_lsp</code>, and <code>g:vim_arb_no_maps</code> to skip an integration or the run mapping.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tutorial-section">
+        <h2>Token categories</h2>
+        <p>The grammar classifies tokens into the categories arb's language defines — built from the verb / widget / directive corpus the arb binary ships:</p>
+        <table class="parity-table">
+          <thead><tr><th>Group</th><th>Tokens (sample)</th></tr></thead>
+          <tbody>
+            <tr><td>Widgets</td><td><code>text</code> <code>tail</code> <code>table</code> <code>list</code> <code>gauge</code> <code>spark</code> <code>bars</code> <code>histo</code> <code>chart</code> <code>select</code> <code>input</code> <code>tabs</code> <code>block</code> <code>frame</code> <code>grid</code></td></tr>
+            <tr><td>Input sources</td><td><code>in</code> <code>in.json</code> <code>in.csv</code> <code>in.tsv</code> <code>in.xml</code> <code>in.html</code> <code>in.yaml</code> <code>in.toml</code> <code>in.logfmt</code></td></tr>
+            <tr><td>Directives</td><td><code>source</code> <code>bind</code> <code>configure</code> <code>grid</code> <code>import</code> <code>out</code> <code>search</code> <code>timeout</code> <code>expect</code></td></tr>
+            <tr><td>Control flow</td><td><code>if</code> <code>elif</code> <code>else</code> <code>for</code> <code>while</code> <code>match</code> <code>case</code> <code>when</code> <code>break</code> <code>continue</code> <code>return</code></td></tr>
+            <tr><td>Declarations</td><td><code>fn</code> <code>var</code> <code>let</code> <code>import</code> <code>save</code> <code>as</code></td></tr>
+            <tr><td>Query verbs</td><td><code>field</code> <code>fields</code> <code>find</code> <code>attr</code> <code>where</code> <code>pick</code> <code>map</code> <code>tally</code> <code>count</code> <code>sum</code> <code>sort_by</code> <code>group_by</code> <code>uniq</code> <code>percentile</code> <code>sma</code></td></tr>
+            <tr><td>Actions</td><td><code>alert</code> <code>beep</code> <code>exec</code> <code>flash</code> <code>quit</code></td></tr>
+            <tr><td>Widget paths</td><td><code>.codes</code> <code>.errors</code> <code>.ps.sel</code></td></tr>
+            <tr><td>Flags</td><td><code>-label</code> <code>-max</code> <code>-cols</code> <code>-color</code> <code>-prompt</code> <code>-tabs</code></td></tr>
+          </tbody>
+        </table>
+        <p>Regex literals (<code>/.../</code>, optional trailing <code>i</code>), single- and double-quoted strings with escapes, the <code>|&gt;</code> / <code>&lt;-</code> / <code>=&gt;</code> operators, durations / sizes, numbers, and the full operator set are handled too. Everything links to standard highlight groups, so every colorscheme covers it without bespoke tuning.</p>
+      </section>
+
+      <section class="tutorial-section">
+        <h2>Layout</h2>
+<pre>vim-arb/
+&#9500;&#9472;&#9472; ftdetect/arb.vim     # *.arb + arb shebang -> filetype=arb
+&#9500;&#9472;&#9472; syntax/arb.vim       # standalone arb grammar (widgets, verbs, sources)
+&#9500;&#9472;&#9472; scripts/gen_syntax.sh # stamps syntax/arb.vim with the arb version
+&#9500;&#9472;&#9472; ftplugin/arb.vim     # commentstring '# %s', :compiler arb, :ArbRun
+&#9500;&#9472;&#9472; compiler/arb.vim     # :make via arb --check -> quickfix
+&#9500;&#9472;&#9472; indent/arb.vim       # standalone brace-aware indenter
+&#9500;&#9472;&#9472; plugin/arb.vim       # ALE linter + vim-lsp + coc + nvim-dap wiring
+&#9492;&#9472;&#9472; doc/arb.txt          # :help vim-arb</pre>
+        <p>Standard Vim runtime layout, so pathogen / vim-plug / native packages add it to <code>runtimepath</code> with no special handling. Licensed MIT.</p>
+      </section>
+
+      <section class="tutorial-section">
+        <h2>Compatibility</h2>
+        <table class="parity-table">
+          <thead><tr><th>Editor / plugin</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Vim 8+</td><td class="ok">Filetype, syntax, indent, ftplugin, compiler</td></tr>
+            <tr><td>Neovim</td><td class="ok">Same runtime files</td></tr>
+            <tr><td>ALE</td><td class="ok"><code>arb --check</code> linter</td></tr>
+            <tr><td>vim-lsp</td><td class="ok"><code>arb --lsp</code> language server</td></tr>
+            <tr><td>coc.nvim</td><td class="ok"><code>languageserver</code> config in README</td></tr>
+            <tr><td>nvim-dap</td><td class="ok"><code>arb --dap</code> debug adapter config in README</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+    </main>
+  </div>
+  <script src="hud-theme.js"></script>
+</body>
+</html>
