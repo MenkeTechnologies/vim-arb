@@ -1,0 +1,165 @@
+*arb.txt*   Syntax, filetype, indent, checking and LSP support for arb
+
+                              vim-arb manual
+
+==============================================================================
+CONTENTS                                                          *vim-arb*
+
+    1. Introduction ........................... |vim-arb-intro|
+    2. Installation ........................... |vim-arb-install|
+    3. Filetype detection ..................... |vim-arb-ftdetect|
+    4. Syntax highlighting .................... |vim-arb-syntax|
+    5. Running (:make / :ArbRun) .............. |vim-arb-run|
+    6. Linting (ALE) .......................... |vim-arb-ale|
+    7. Language server (LSP) .................. |vim-arb-lsp|
+    8. Debug adapter (DAP) .................... |vim-arb-dap|
+    9. Options ................................ |vim-arb-options|
+
+==============================================================================
+1. INTRODUCTION                                             *vim-arb-intro*
+
+vim-arb adds Vim / Neovim support for arb — a pipe-native language that turns
+a Unix pipeline into a dynamic TUI or served web dashboard from a declarative,
+Tcl/Tk-flavored spec, running on the fusevm bytecode VM + Cranelift JIT. It
+provides:
+
+    - filetype detection for *.arb files and arb shebangs
+    - standalone arb syntax highlighting (widgets, query verbs, inputs, …)
+    - brace-aware indentation
+    - `:make` / `:ArbRun` wiring through the arb binary
+    - ALE checking via `arb --check`
+    - vim-lsp / coc.nvim registration via `arb --lsp`
+    - nvim-dap guidance via `arb --dap`
+
+==============================================================================
+2. INSTALLATION                                           *vim-arb-install*
+
+pathogen (https://github.com/tpope/vim-pathogen): >
+    cd ~/.vim/bundle
+    git clone https://github.com/MenkeTechnologies/vim-arb
+<
+Then generate help tags: >
+    :Helptags
+<
+vim-plug: >
+    Plug 'MenkeTechnologies/vim-arb'
+<
+Native packages (Vim 8+ / Neovim): >
+    git clone https://github.com/MenkeTechnologies/vim-arb \
+        ~/.vim/pack/plugins/start/vim-arb
+<
+The `arb` binary must be on $PATH for running, checking and LSP to work.
+
+==============================================================================
+3. FILETYPE DETECTION                                    *vim-arb-ftdetect*
+
+Buffers are set to the "arb" filetype when:
+
+    - the filename ends in *.arb, or
+    - line 1 is a shebang naming arb, e.g. `#!/usr/bin/env arb`.
+
+==============================================================================
+4. SYNTAX HIGHLIGHTING                                     *vim-arb-syntax*
+
+A standalone arb grammar covering the language surface:
+
+    declarations  fn var let import save as
+    control flow  if elif else for while match case when return break
+                  continue do
+    word ops      and or not in every out spawn send matches
+    inputs        in in.json in.csv in.tsv in.xml in.html in.yaml in.yml
+                  in.toml in.logfmt
+    directives    source bind configure grid search timeout expect
+    widgets       text tail table list gauge spark bars histo chart select
+                  input tabs block frame slider check facet filter
+    query verbs   field where map tally sort_by group_by pick percentile
+                  sma ewma bins delta cumsum … (the pipeline vocabulary)
+    actions       alert beep exec flash quit
+
+Widget paths (`.a.b.c`), -flags (`-label` `-max` …), `/.../i` regex literals,
+double- and single-quoted strings with escapes, `#` comments, numbers with
+duration (`500ms`) and size (`4mb`) suffixes, and the operator set (`|>` `<-`
+`=>` `..`) are handled. Everything links to standard highlight groups, so every
+colorscheme covers it.
+
+The token surface is hand-curated (arb's grammar is small and fixed).
+`scripts/gen_syntax.sh` stamps the file with the arb version it was verified
+against.
+
+==============================================================================
+5. RUNNING                                                   *vim-arb-run*
+
+The ftplugin sets `:compiler arb`, so `:make` static-checks the current spec
+through arb and routes diagnostics to the quickfix list: >
+    :make
+<
+To run the current buffer as an arb spec (pipe data in for a live dashboard): >
+    :ArbRun [args...]
+<
+Mapped by default to <LocalLeader>r (disable with `g:vim_arb_no_maps`).
+
+==============================================================================
+6. LINTING (ALE)                                             *vim-arb-ale*
+
+When ALE (https://github.com/dense-analysis/ale) is installed, vim-arb
+registers a linter that runs: >
+    arb --check %t
+<
+Diagnostics of the form "<file>:<line>: <message>" (or "<message> at <file>
+line <n>") are surfaced inline.
+
+==============================================================================
+7. LANGUAGE SERVER (LSP)                                     *vim-arb-lsp*
+
+vim-lsp (https://github.com/prabirshrestha/vim-lsp): registered automatically
+as: >
+    arb --lsp
+<
+allowlisted for the "arb" filetype. Invoke `arb --lsp` with ONLY `--lsp`
+(no appended `--stdio`), mirroring `stryke --lsp`.
+
+coc.nvim: add to coc-settings.json: >
+    {
+      "languageserver": {
+        "arb": {
+          "command": "arb",
+          "args": ["--lsp"],
+          "filetypes": ["arb"]
+        }
+      }
+    }
+<
+==============================================================================
+8. DEBUG ADAPTER (DAP)                                       *vim-arb-dap*
+
+arb is wired for a Debug Adapter via `arb --dap` (DAP on stdio). For
+nvim-dap (https://github.com/mfussenegger/nvim-dap): >
+    local dap = require('dap')
+    dap.adapters.arb = {
+      type = 'executable',
+      command = 'arb',
+      args = { '--dap' },   -- no extra transport args; arb rejects them
+    }
+    dap.configurations.arb = {
+      { type = 'arb', request = 'launch', name = 'Run arb spec',
+        program = '${file}' },
+    }
+<
+As with LSP, invoke arb with ONLY `--dap`.
+
+==============================================================================
+9. OPTIONS                                               *vim-arb-options*
+
+                                                       *g:vim_arb_no_ale*
+Set to 1 before load to skip ALE linter registration: >
+    let g:vim_arb_no_ale = 1
+<
+                                                       *g:vim_arb_no_lsp*
+Set to 1 before load to skip vim-lsp server registration: >
+    let g:vim_arb_no_lsp = 1
+<
+                                                       *g:vim_arb_no_maps*
+Set to 1 before load to skip the <LocalLeader>r run mapping: >
+    let g:vim_arb_no_maps = 1
+<
+ vim:tw=78:ts=8:ft=help:norl:
