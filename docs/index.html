@@ -181,7 +181,7 @@ git clone https://github.com/MenkeTechnologies/vim-arb \
           </div>
           <div class="cat-card">
             <h4>Syntax highlighting</h4>
-            <p>A standalone arb grammar — widgets, query verbs, input sources, directives, control flow, declarations, widget paths, <code>-flags</code>, <code>/regex/</code>, strings, durations/sizes, and operators — built from arb's own LSP corpus.</p>
+            <p>A standalone arb grammar — widgets, query verbs, input sources, directives, control flow, declarations, widget paths, <code>-flags</code>, <code>/regex/</code>, strings, durations/sizes, and operators — hand-curated from the arb language surface.</p>
           </div>
           <div class="cat-card">
             <h4>Indentation</h4>
@@ -204,13 +204,13 @@ git clone https://github.com/MenkeTechnologies/vim-arb \
 
       <section class="tutorial-section">
         <h2>Token categories</h2>
-        <p>The grammar classifies tokens into the categories arb's language defines — built from the verb / widget / directive corpus the arb binary ships:</p>
+        <p>The grammar classifies tokens into the categories arb's language defines — hand-curated from arb's widget / verb / directive surface:</p>
         <table class="parity-table">
           <thead><tr><th>Group</th><th>Tokens (sample)</th></tr></thead>
           <tbody>
-            <tr><td>Widgets</td><td><code>text</code> <code>tail</code> <code>table</code> <code>list</code> <code>gauge</code> <code>spark</code> <code>bars</code> <code>histo</code> <code>chart</code> <code>select</code> <code>input</code> <code>tabs</code> <code>block</code> <code>frame</code> <code>grid</code></td></tr>
+            <tr><td>Widgets</td><td><code>text</code> <code>tail</code> <code>table</code> <code>list</code> <code>gauge</code> <code>spark</code> <code>bars</code> <code>histo</code> <code>chart</code> <code>select</code> <code>input</code> <code>tabs</code> <code>block</code> <code>frame</code> <code>slider</code> <code>check</code> <code>facet</code> <code>filter</code></td></tr>
             <tr><td>Input sources</td><td><code>in</code> <code>in.json</code> <code>in.csv</code> <code>in.tsv</code> <code>in.xml</code> <code>in.html</code> <code>in.yaml</code> <code>in.toml</code> <code>in.logfmt</code></td></tr>
-            <tr><td>Directives</td><td><code>source</code> <code>bind</code> <code>configure</code> <code>grid</code> <code>import</code> <code>out</code> <code>search</code> <code>timeout</code> <code>expect</code></td></tr>
+            <tr><td>Directives</td><td><code>source</code> <code>bind</code> <code>configure</code> <code>grid</code> <code>search</code> <code>timeout</code> <code>expect</code></td></tr>
             <tr><td>Control flow</td><td><code>if</code> <code>elif</code> <code>else</code> <code>for</code> <code>while</code> <code>match</code> <code>case</code> <code>when</code> <code>break</code> <code>continue</code> <code>return</code></td></tr>
             <tr><td>Declarations</td><td><code>fn</code> <code>var</code> <code>let</code> <code>import</code> <code>save</code> <code>as</code></td></tr>
             <tr><td>Query verbs</td><td><code>field</code> <code>fields</code> <code>find</code> <code>attr</code> <code>where</code> <code>pick</code> <code>map</code> <code>tally</code> <code>count</code> <code>sum</code> <code>sort_by</code> <code>group_by</code> <code>uniq</code> <code>percentile</code> <code>sma</code></td></tr>

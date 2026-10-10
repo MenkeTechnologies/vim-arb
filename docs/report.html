@@ -103,13 +103,9 @@
 
       <h2 class="tutorial-title"><span class="step-hash">&gt;_</span>EXECUTIVE SUMMARY</h2>
       <p class="tutorial-subtitle"><strong>vim-arb</strong> is the Vim / Neovim editor support for <strong>arb</strong> &mdash; a Tcl/Tk-flavored declarative language for visualizing and modifying Unix pipelines, on the fusevm bytecode VM + Cranelift JIT. It ships as a standard Vim runtime tree (<code>ftdetect/</code>, <code>syntax/</code>, <code>indent/</code>, <code>ftplugin/</code>, <code>compiler/</code>, <code>plugin/</code>, <code>doc/</code>), so pathogen / vim-plug / native packages add it to <code>runtimepath</code> with no special handling.</p>
-      <p class="tutorial-subtitle"><strong>Design principle:</strong> the syntax file is a <strong>standalone arb grammar</strong> covering the widget, query-verb, input-source, and directive surface &mdash; not a wrapper around another language's syntax. The token surface is built from arb's own LSP corpus so it tracks the binary; <code>scripts/gen_syntax.sh</code> stamps the file with the arb version it was verified against.</p>
+      <p class="tutorial-subtitle"><strong>Design principle:</strong> the syntax file is a <strong>standalone arb grammar</strong> covering the widget, query-verb, input-source, and directive surface &mdash; not a wrapper around another language's syntax. The token surface is hand-curated from the arb language surface; <code>scripts/gen_syntax.sh</code> stamps the file with the arb version it was verified against.</p>
 
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-val">18</div><div class="stat-label">Widgets</div></div>
-        <div class="stat-card"><div class="stat-val accent">10</div><div class="stat-label">Input sources</div></div>
-        <div class="stat-card"><div class="stat-val">9</div><div class="stat-label">Directives</div></div>
-        <div class="stat-card"><div class="stat-val">110</div><div class="stat-label">Query verbs</div></div>
         <div class="stat-card"><div class="stat-val">7</div><div class="stat-label">Runtime files</div></div>
         <div class="stat-card"><div class="stat-val green">4</div><div class="stat-label">Integrations (ALE / lsp / coc / dap)</div></div>
         <div class="stat-card"><div class="stat-val accent">2</div><div class="stat-label">Detection paths (ext + shebang)</div></div>
@@ -137,18 +133,18 @@
 
       <hr class="section-rule">
       <h2 class="tutorial-title"><span class="step-hash">$</span>SYNTAX COVERAGE</h2>
-      <p class="tutorial-subtitle">Token categories taken from arb's language definition &mdash; the widget / query-verb / input-source / directive corpus the arb binary ships. Dotted widget paths (<code>.codes</code>, <code>.errors</code>) and the <code>|&gt;</code> / <code>&lt;-</code> / <code>=&gt;</code> operators are first-class arb constructs and are highlighted.</p>
+      <p class="tutorial-subtitle">Token categories taken from arb's language definition &mdash; the widget / query-verb / input-source / directive surface of the arb language. Dotted widget paths (<code>.codes</code>, <code>.errors</code>) and the <code>|&gt;</code> / <code>&lt;-</code> / <code>=&gt;</code> operators are first-class arb constructs and are highlighted.</p>
 
       <table class="parity-table">
         <thead><tr><th>Group</th><th>Tokens (sample)</th><th>Highlight link</th></tr></thead>
         <tbody>
-          <tr><td>Widgets</td><td><code>text</code> <code>tail</code> <code>table</code> <code>list</code> <code>gauge</code> <code>spark</code> <code>bars</code> <code>histo</code> <code>chart</code> <code>select</code> <code>input</code> <code>tabs</code> <code>block</code> <code>frame</code> <code>grid</code></td><td class="ok">Function</td></tr>
-          <tr><td>Input sources</td><td><code>in</code> <code>in.json</code> <code>in.csv</code> <code>in.tsv</code> <code>in.xml</code> <code>in.html</code> <code>in.yaml</code> <code>in.toml</code> <code>in.logfmt</code></td><td class="ok">Special</td></tr>
-          <tr><td>Directives</td><td><code>source</code> <code>bind</code> <code>configure</code> <code>grid</code> <code>import</code> <code>out</code> <code>search</code> <code>timeout</code> <code>expect</code></td><td class="ok">PreProc</td></tr>
+          <tr><td>Widgets</td><td><code>text</code> <code>tail</code> <code>table</code> <code>list</code> <code>gauge</code> <code>spark</code> <code>bars</code> <code>histo</code> <code>chart</code> <code>select</code> <code>input</code> <code>tabs</code> <code>block</code> <code>frame</code> <code>slider</code> <code>check</code> <code>facet</code> <code>filter</code></td><td class="ok">Type</td></tr>
+          <tr><td>Input sources</td><td><code>in</code> <code>in.json</code> <code>in.csv</code> <code>in.tsv</code> <code>in.xml</code> <code>in.html</code> <code>in.yaml</code> <code>in.toml</code> <code>in.logfmt</code></td><td class="ok">PreProc</td></tr>
+          <tr><td>Directives</td><td><code>source</code> <code>bind</code> <code>configure</code> <code>grid</code> <code>search</code> <code>timeout</code> <code>expect</code></td><td class="ok">Keyword</td></tr>
           <tr><td>Control flow</td><td><code>if</code> <code>elif</code> <code>else</code> <code>while</code> <code>for</code> <code>match</code> <code>case</code> <code>when</code> <code>break</code> <code>continue</code> <code>return</code></td><td class="ok">Statement</td></tr>
           <tr><td>Declarations</td><td><code>fn</code> <code>var</code> <code>let</code> <code>import</code> <code>save</code> <code>as</code></td><td class="ok">Keyword</td></tr>
           <tr><td>Query verbs</td><td><code>field</code> <code>fields</code> <code>find</code> <code>attr</code> <code>where</code> <code>pick</code> <code>map</code> <code>tally</code> <code>count</code> <code>sum</code> <code>sort_by</code> <code>group_by</code> <code>uniq</code> <code>percentile</code> <code>sma</code> <code>ewma</code></td><td class="ok">Function</td></tr>
-          <tr><td>Actions</td><td><code>alert</code> <code>beep</code> <code>exec</code> <code>flash</code> <code>quit</code></td><td class="ok">Statement</td></tr>
+          <tr><td>Actions</td><td><code>alert</code> <code>beep</code> <code>exec</code> <code>flash</code> <code>quit</code></td><td class="ok">Special</td></tr>
           <tr><td>Literals &amp; vars</td><td>widget paths (<code>.codes</code>/<code>.errors</code>), strings, <code>/regex/</code>, durations/sizes, flags (<code>-max</code>/<code>-cols</code>)</td><td class="ok">Identifier / String / Number</td></tr>
         </tbody>
       </table>
